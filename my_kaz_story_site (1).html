@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Kaz Story — конструктор сувениров</title>
+  <style>
+    :root {
+      --bg: #f3efe7;
+      --brand-dark: #1f3f33;
+      --brand-accent: #b86a3c;
+      --brand-light: #f7f1e4;
+      --border-soft: #ded3bf;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+      background: radial-gradient(circle at top, #faf5ea 0, var(--bg) 50%, #ebe3d3 100%);
+      color: #2e2e2e;
+    }
+    header {
+      background: #1f3f33;
+      padding: 18px 20px;
+      color: white;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      position: relative;
+    }
+    header .logo {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .logo-mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      border: 2px solid #f7f1e4;
+      position: relative;
+    }
+    .logo-mark::before,
+    .logo-mark::after {
+      content:"";
+      position:absolute;
+      inset:4px;
+      border-radius:6px;
+      border:1px solid rgba(247,241,228,0.75);
+    }
+    .logo-mark::after {
+      inset:9px;
+      border-radius:50%;
+    }
+    .logo-text { letter-spacing: 0.16em; }
+    header h1 {
+      margin: 6px 0 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .lang-switch {
+      position:absolute;
+      top: 14px;
+      right: 16px;
+      display:flex;
+      gap:6px;
+    }
+    .lang-btn {
+      border:1px solid rgba(247,241,228,0.6);
+      background:rgba(247,241,228,0.16);
+      color:#f7f1e4;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      cursor:pointer;
+    }
+    .lang-btn.active {
+      background:#f7f1e4;
+      color:#1f3f33;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 24px auto 32px;
+      padding: 0 16px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: flex-start;
+    }
+    @media (max-width: 880px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.9);
+      border-radius: 16px;
+      padding: 20px 20px 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+      border: 1px solid var(--border-soft);
+      backdrop-filter: blur(6px);
+    }
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+    .panel p.meta {
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: #6d6d6d;
+    }
+
+    .group-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #777;
+      margin: 18px 0 8px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: #f7f1e4;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip span.icon { font-size: 14px; }
+    .chip.active {
+      background: #1f3f33;
+      color: #f7f1e4;
+      border-color: #1f3f33;
+      box-shadow: 0 6px 16px rgba(10,30,24,0.35);
+    }
+
+    .color-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .color-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .color-dot.active {
+      border-color: #1f3f33;
+      box-shadow: 0 0 0 2px rgba(31,63,51,0.35);
+    }
+    .color-dot::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: inherit;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      font-size: 14px;
+      background: #fdfaf4;
+    }
+
+    .preview-panel {
+      position: relative;
+      overflow: hidden;
+      padding: 32px 20px;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+      background: linear-gradient(145deg, #f7f1e4 0%, #e7ddcc 45%, #d5c7b0 100%);
+    }
+    .preview-header {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #777;
+      margin-bottom: 10px;
+    }
+
+    .preview-card { border-radius: 22px; padding: 26px 22px; height: 360px; position: relative; color: #fdfaf4; box-shadow: 0 18px 48px rgba(0,0,0,0.45); display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; backdrop-filter: blur(3px); border:1px solid rgba(255,255,255,0.25); }
+    }
+
+    .badge-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.22);
+    }
+
+    .preview-main { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.45));
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .preview-icon {
+      width: 120px;
+      height: 160px;
+      position: relative;
+    }
+    .preview-icon .shape {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px 28px 18px 18px;
+      border: 3px solid rgba(255,255,255,0.86);
+    }
+
+    /* Формы под типы сувенира */
+    .preview-icon[data-type="magnet"] .shape {
+      border-radius: 999px;
+      width: 110px;
+      height: 110px;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .preview-icon[data-type="keychain"] .shape {
+      border-radius: 20px;
+      width: 70px;
+      height: 130px;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .preview-icon[data-type="poster"] .shape {
+      border-radius: 10px;
+      width: 90px;
+      height: 130px;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .preview-icon[data-type="sticker"] .shape {
+      border-radius: 40% 60% 50% 70%;
+      border-style: dashed;
+    }
+
+    /* Варианты элемента внутри */
+    .preview-icon[data-element="bayterek"]::before,
+    .preview-icon[data-element="bozzhyra"]::before,
+    .preview-icon[data-element="ornament"]::before,
+    .preview-icon[data-element="city"]::before {
+      content: "";
+      position: absolute;
+      inset: 18px 20px 22px;
+      border-radius: 18px;
+      border: 2px solid rgba(255,255,255,0.85);
+      box-shadow: 0 16px 26px rgba(0,0,0,0.35);
+    }
+
+    .preview-icon[data-element="bayterek"]::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 26px;
+      width: 56px;
+      height: 56px;
+      margin-left: -28px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.92);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.4);
+    }
+
+    .preview-icon[data-element="bozzhyra"]::after {
+      content: "";
+      position: absolute;
+      inset: 46px 24px 20px;
+      border-radius: 46% 46% 18% 18%;
+      border-top: 3px solid rgba(255,255,255,0.95);
+      border-left: 3px solid rgba(255,255,255,0.9);
+      border-right: 3px solid rgba(255,255,255,0.9);
+    }
+
+    .preview-icon[data-element="ornament"]::after {
+      content: "";
+      position: absolute;
+      inset: 30px 30px;
+      border-radius: 18px;
+      border: 3px dashed rgba(255,255,255,0.9);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.18);
+    }
+
+    .preview-icon[data-element="city"]::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 22px;
+      height: 52px;
+      border-radius: 10px 10px 4px 4px;
+      border-top: 3px solid rgba(255,255,255,0.9);
+      box-shadow: 0 -14px 28px rgba(0,0,0,0.45);
+    }
+
+    .preview-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      opacity: 0.92;
+      margin-top: 12px;
+    }
+    .preview-footer strong { font-size: 13px; }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.6);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .style-pill {
+      font-size: 11px;
+      text-transform: uppercase;
+      opacity: .9;
+    }
+    .preview-img {
+      position:absolute;
+      inset: 26px 26px 40px;
+      width: calc(100% - 52px);
+      height: auto;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 18px;
+      box-shadow: 0 12px 26px rgba(0,0,0,0.4);
+      display: none;
+    }
+    .preview-quote {
+      position:absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 24px;
+      font-size: 11px;
+      line-height: 1.4;
+      text-align: left;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      display: none;
+    }
+    .preview-icon[data-ornament="koskar"] .shape { border-style: solid; }
+    .preview-icon[data-ornament="tumar"] .shape { border-radius: 10px 32px 18px 32px; }
+    .preview-icon[data-ornament="spiral"] .shape { border-style: dotted; }
+    .preview-icon[data-ornament="geo"] .shape { border-radius: 8px; }
+
+    .download-btn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: var(--brand-dark);
+      color: #f7f1e4;
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    }
+    .download-btn:hover { background: #264a3a; }
+      
+  </style>
+</head>
+<body>
+  <header>
+            <div class="logo">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span class="logo-text">KazArt Souvenir</span>
+    </div>
+    <div class="lang-switch">
+      <button id="lang-ru" class="lang-btn active">RU</button>
+      <button id="lang-en" class="lang-btn">EN</button>
+    </div>
+    <h1 id="title-main">My Kaz Story — онлайн‑конструктор сувениров</h1>
+  </header>
+
+  <main class="page">
+    <div class="layout">
+      <section class="panel" aria-label="Панель настроек сувенира">
+        <h2 id="panel-title">Создай свой персональный сувенир</h2>
+        <p class="meta" id="panel-meta">Выбери формат, стиль, цвет и визуальный мотив — предпросмотр справа обновится сразу.</p>
+
+        <div class="group-label" id="label-type">1. Тип сувенира</div>
+        <div class="chip-row" id="type-row">
+          <button class="chip active" data-type="magnet"><span class="icon">🧲</span> Магнит</button>
+          <button class="chip" data-type="keychain"><span class="icon">🔑</span> Брелок</button>
+          <button class="chip" data-type="poster"><span class="icon">🖼</span> Мини‑постер</button>
+          <button class="chip" data-type="sticker"><span class="icon">💠</span> Стикер</button>
+        </div>
+
+        <div class="group-label" id="label-style">2. Стиль</div>
+        <div class="chip-row" id="style-row">
+          <button class="chip active" data-style="nature">Nature Art</button>
+          <button class="chip" data-style="heritage">Heritage Art</button>
+          <button class="chip" data-style="urban">Urban Art</button>
+        </div>
+
+        <div class="group-label" id="label-color">3. Цветовая палитра</div>
+        <div class="color-row" id="color-row">
+          <div class="color-dot active" data-color="steppe" title="Степной зелёный" style="background:#355f46"></div>
+          <div class="color-dot" data-color="terracotta" title="Терракота" style="background:#b8683c"></div>
+          <div class="color-dot" data-color="sand" title="Песочный беж" style="background:#d9c3a2"></div>
+          <div class="color-dot" data-color="night" title="Ночной графит" style="background:#222325"></div>
+        </div>
+
+        <div class="group-label" id="label-element">4. Визуальный мотив</div>
+        <select id="element-select">
+          <option value="bayterek">Астана — Байтерек</option>
+          <option value="bozzhyra">Мангыстау — Бозжыра</option>
+          <option value="ornament">Казахский орнамент</option>
+          <option value="city">Городской skyline</option>
+        </select>
+
+        <div class="group-label" id="label-ornament">5. Орнаменты</div>
+        <div class="chip-row" id="ornament-row">
+          <button class="chip" data-ornament="koskar">Қошқар мүйіз</button>
+          <button class="chip" data-ornament="tumar">Тұмар</button>
+          <button class="chip" data-ornament="spiral">Спираль</button>
+          <button class="chip" data-ornament="geo">Геометрия</button>
+        </div>
+
+        <div class="group-label" id="label-image">6. Картинка</div>
+        <div class="chip-row" id="image-row">
+          <button class="chip" data-image="baiterek-img">Байтерек</button>
+          <button class="chip" data-image="bozzhyra-img">Бозжыра</button>
+          <button class="chip" data-image="city-img">Skyline</button>
+        </div>
+
+        <div class="group-label" id="label-upload">7. Загрузить своё изображение</div>
+        <input type="file" id="upload" accept="image/*" style="margin-bottom:12px;" />
+
+        <div class="group-label" id="label-quote">8. Цитата</div>
+        <input
+          type="text"
+          id="quoteInput"
+          placeholder="Введите цитату"
+          style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-soft);"
+        />
+      </section>
+
+      <section class="panel preview-panel" aria-label="Предпросмотр сувенира">
+        <div class="preview-header" id="preview-header">Онлайн‑предпросмотр</div>
+        <div class="preview-card" id="preview-card">
+          <div class="badge-type" id="badge-type">🧲 МАГНИТ</div>
+          <div class="preview-main">
+            <div class="preview-icon" id="preview-icon" data-element="bayterek" data-type="magnet">
+              <div class="shape"></div>
+              <img id="preview-img" class="preview-img" alt="Превью сувенира" />
+              <div id="preview-quote" class="preview-quote"></div>
+            </div>
+          </div>
+          <div class="preview-footer">
+            <div>
+              <div class="style-pill" id="style-pill">Nature Art · степной зелёный</div>
+              <strong id="element-label">Астана · Байтерек</strong>
+            </div>
+            <div class="tag" id="tag-label">My Kaz Story</div>
+          </div>
+        </div>
+        <button class="download-btn" type="button" id="download-btn">Скачать превью</button>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    // ===== ЯЗЫК RU / EN =====
+    let currentLang = 'ru';
+    const I18N = {
+      ru: {
+        title: 'My Kaz Story — онлайн‑конструктор сувениров',
+        create: 'Создай свой персональный сувенир',
+        meta: 'Выбери формат, стиль, цвет и визуальный мотив — предпросмотр справа обновится сразу.',
+        preview: 'Онлайн‑предпросмотр',
+        download: 'Скачать превью',
+      },
+      en: {
+        title: 'My Kaz Story — online souvenir builder',
+        create: 'Create your personal souvenir',
+        meta: 'Choose format, style, color and visual motif — the preview on the right updates instantly.',
+        preview: 'Live preview',
+        download: 'Download preview',
+      },
+    };
+
+    function applyLang(lang) {
+      currentLang = lang;
+      const t = I18N[lang];
+      document.getElementById('title-main').textContent = t.title;
+      document.getElementById('panel-title').textContent = t.create;
+      document.getElementById('panel-meta').textContent = t.meta;
+      document.getElementById('preview-header').textContent = t.preview;
+      document.getElementById('download-btn').textContent = t.download;
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(lang === 'ru' ? 'lang-ru' : 'lang-en').classList.add('active');
+    }
+
+    document.getElementById('lang-ru').addEventListener('click', () => applyLang('ru'));
+    document.getElementById('lang-en').addEventListener('click', () => applyLang('en'));
+
+    // ===== СОСТОЯНИЕ И ЭЛЕМЕНТЫ =====
+    const state = {
+      type: 'magnet',
+      style: 'nature',
+      color: 'steppe',
+      element: 'bayterek',
+      ornament: '',
+      image: '',
+      customImage: '',
+      quote: '',
+    };
+
+    const typeRow = document.getElementById('type-row');
+    const styleRow = document.getElementById('style-row');
+    const colorRow = document.getElementById('color-row');
+    const elementSelect = document.getElementById('element-select');
+
+    const previewCard = document.getElementById('preview-card');
+    const previewIcon = document.getElementById('preview-icon');
+    const badgeType = document.getElementById('badge-type');
+    const stylePill = document.getElementById('style-pill');
+    const elementLabel = document.getElementById('element-label');
+    const tagLabel = document.getElementById('tag-label');
+    const ornamentRow = document.getElementById('ornament-row');
+    const imageRow = document.getElementById('image-row');
+    const uploadInput = document.getElementById('upload');
+    const previewImg = document.getElementById('preview-img');
+    const previewQuote = document.getElementById('preview-quote');
+    const downloadBtn = document.getElementById('download-btn');
+
+    const TYPE_BADGE = {
+      ru: {
+        magnet: '🧲 МАГНИТ',
+        keychain: '🔑 БРЕЛОК',
+        poster: '🖼 МИНИ‑ПОСТЕР',
+        sticker: '💠 СТИКЕР',
+      },
+      en: {
+        magnet: '🧲 MAGNET',
+        keychain: '🔑 KEYCHAIN',
+        poster: '🖼 MINI POSTER',
+        sticker: '💠 STICKER',
+      },
+    };
+
+    const STYLE_LABELS = {
+      nature: 'Nature Art',
+      heritage: 'Heritage Art',
+      urban: 'Urban Art',
+    };
+
+    const COLOR_MAP = {
+      steppe: { bg: '#355f46', nameRu: 'степной зелёный', nameEn: 'steppe green' },
+      terracotta: { bg: '#b8683c', nameRu: 'терракота', nameEn: 'terracotta' },
+      sand: { bg: '#c8a982', nameRu: 'песочный беж', nameEn: 'sand beige' },
+      night: { bg: '#222325', nameRu: 'ночной графит', nameEn: 'night graphite' },
+    };
+
+    const ELEMENT_LABELS = {
+      ru: {
+        bayterek: 'Астана · Байтерек',
+        bozzhyra: 'Мангыстау · Бозжыра',
+        ornament: 'Орнамент · Қошқар мүйіз',
+        city: 'Город · Skyline',
+      },
+      en: {
+        bayterek: 'Astana · Bayterek',
+        bozzhyra: 'Mangystau · Bozzhyra',
+        ornament: 'Ornament · Qoshqar muyiz',
+        city: 'City · Skyline',
+      },
+    };
+
+    function updatePreview() {
+      const c = COLOR_MAP[state.color];
+      const colorName = currentLang === 'ru' ? c.nameRu : c.nameEn;
+
+      // фон
+      previewCard.style.background = c.bg;
+
+      // тип + форма
+      badgeType.textContent = TYPE_BADGE[currentLang][state.type];
+      previewIcon.dataset.type = state.type;
+
+      // элемент + синхронизация селекта
+      if (state.image === 'baiterek-img') state.element = 'bayterek';
+      if (state.image === 'bozzhyra-img') state.element = 'bozzhyra';
+      if (state.image === 'city-img') state.element = 'city';
+
+      elementSelect.value = state.element;
+      previewIcon.dataset.element = state.element;
+
+      // орнамент
+      previewIcon.dataset.ornament = state.ornament || '';
+
+      // подписи
+      elementLabel.textContent = ELEMENT_LABELS[currentLang][state.element];
+      stylePill.textContent = `${STYLE_LABELS[state.style]} · ${colorName}`;
+      tagLabel.textContent = state.style === 'urban' ? 'KazUrban Story' : 'My Kaz Story';
+
+      // картинка
+      if (state.customImage) {
+        previewImg.src = state.customImage;
+        previewImg.style.display = 'block';
+      } else {
+        previewImg.removeAttribute('src');
+        previewImg.style.display = 'none';
+      }
+
+      // цитата
+      previewQuote.textContent = state.quote;
+      previewQuote.style.display = state.quote ? 'block' : 'none';
+    }
+
+    function handleChipRow(row, key) {
+      row.addEventListener('click', (e) => {
+        const btn = e.target.closest('.chip');
+        if (!btn) return;
+        row.querySelectorAll('.chip').forEach(ch => ch.classList.remove('active'));
+        btn.classList.add('active');
+        state[key] = btn.dataset[key];
+        updatePreview();
+      });
+    }
+
+    handleChipRow(typeRow, 'type');
+    handleChipRow(styleRow, 'style');
+    handleChipRow(ornamentRow, 'ornament');
+    handleChipRow(imageRow, 'image');
+
+    colorRow.addEventListener('click', (e) => {
+      const dot = e.target.closest('.color-dot');
+      if (!dot) return;
+      colorRow.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+      dot.classList.add('active');
+      state.color = dot.dataset.color;
+      updatePreview();
+    });
+
+    elementSelect.addEventListener('change', (e) => {
+      state.element = e.target.value;
+      updatePreview();
+    });
+
+    if (uploadInput) {
+      uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          state.customImage = event.target.result;
+          state.image = 'custom';
+          updatePreview();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function updateQuote() {
+      const input = document.getElementById('quoteInput');
+      state.quote = input.value.trim();
+      updatePreview();
+    }
+
+    document.getElementById('quoteInput').addEventListener('input', updateQuote);
+
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', async () => {
+        if (typeof html2canvas === 'undefined') {
+          alert('Скачивание превью будет доступно на опубликованной версии сайта.');
+          return;
+        }
+        const canvas = await html2canvas(previewCard);
+        const link = document.createElement('a');
+        link.download = 'my-kaz-story.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+
+    // старт: русский язык и первичный рендер
+    applyLang('ru');
+    updatePreview();
+  </script>
+</body>
+</html>
